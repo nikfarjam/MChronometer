@@ -11,13 +11,14 @@ import android.util.Log;
 public class MainActivity extends Activity {
 	private Button btnStart;
 	private Button btnPause;
-	private TextView label;
+	private TextView txtTimer;
 
 	private int state;
 	private long startTime;
-	private long lastWorkingTime;
-	private Handler showTimeHandler;
+	private long lastDuration;
+	
 	private boolean hasStarted;
+	private Handler showTimeHandler;
 	private Runnable showTimeThread;
 	private AsyncTask<String, Void, Void> timerTask;
 
@@ -33,41 +34,34 @@ public class MainActivity extends Activity {
 		setContentView(R.layout.main);
 		state = STOP;
 		hasStarted = false;
-		label = (TextView) findViewById(R.id.time_txt);
+		btnPause = (Button) findViewById(R.id.pause_btn);
+		btnStart = (Button) findViewById(R.id.start_btn);
+		txtTimer = (TextView) findViewById(R.id.time_txt);
 		if (savedInstanceState != null) {
 			state = (Integer) savedInstanceState.get("state");
 			startTime = (Long) savedInstanceState.get("startTime");
-			lastWorkingTime = (Long) savedInstanceState.get("lastWorkingTime");
-			startTime = System.currentTimeMillis() - lastWorkingTime;
-			showCurrentState();
+			lastDuration = (Long) savedInstanceState.get("lastWorkingTime");
+			startTime = System.currentTimeMillis() - lastDuration;
+			showCurrentTime();
 			if (state == START) {
 				doStart();
 			}
 		} else {
-			label.setText("00:00:00:000");
+			txtTimer.setText("00:00:00:000");
 		}
-		btnPause = (Button) findViewById(R.id.pause_btn);
-		btnStart = (Button) findViewById(R.id.start_btn);
-
+		
 		btnStart.setOnClickListener(new View.OnClickListener() {
 
 			@Override
 			public void onClick(View view) {
 				if (state == START || state == SUSPENDED) {
 					state = STOP;
-					showCurrentState();
+					showCurrentTime();
 					doStop();
-					Log.w("stop at ", "" + timerTask);
-					btnStart.setText(getString(R.string.start));
-					btnPause.setText(getString(R.string.pause));
-					btnPause.setEnabled(false);
 					return;
 				} else if (state == STOP) {
 					// start working
 					startTime = System.currentTimeMillis();
-					btnStart.setText(getString(R.string.stop));
-					Log.w("start at ", "" + timerTask);
-					btnPause.setEnabled(true);
 					state = START;
 					doStart();
 					return;
@@ -79,13 +73,13 @@ public class MainActivity extends Activity {
 			@Override
 			public void onClick(View view) {
 				if (state == START) {
-					lastWorkingTime = System.currentTimeMillis() - startTime;
+					lastDuration = System.currentTimeMillis() - startTime;
 					state = SUSPENDED;
 					btnPause.setText(getString(R.string.resume));
-					showCurrentState();
+					showCurrentTime();
 					return;
 				} else if (state == SUSPENDED) {
-					startTime = System.currentTimeMillis() - lastWorkingTime;
+					startTime = System.currentTimeMillis() - lastDuration;
 					state = START;
 					doStart();
 					btnPause.setText(getString(R.string.pause));
@@ -96,12 +90,15 @@ public class MainActivity extends Activity {
 
 	}
 
-	private void showCurrentState() {
+	private void showCurrentTime() {
 		long duration = System.currentTimeMillis() - startTime;
-		label.setText(formatTime(duration));
+		txtTimer.setText(formatTime(duration));
 	}
 
 	private void doStart() {
+		Log.w("start at ", "" + timerTask);
+		btnStart.setText(getString(R.string.stop));
+		btnPause.setEnabled(true);
 		if (hasStarted) {
 			timerTask.cancel(true);
 			timerTask = new TimerTask();
@@ -112,7 +109,7 @@ public class MainActivity extends Activity {
 		showTimeHandler = new Handler(getApplicationContext().getMainLooper());
 		showTimeThread = new Runnable() {
 			public void run() {
-				showCurrentState();
+				showCurrentTime();
 			}
 		};
 		timerTask = new TimerTask();
@@ -120,6 +117,10 @@ public class MainActivity extends Activity {
 	}
 
 	private void doStop() {
+		Log.w("stop at ", "" + timerTask);
+		btnStart.setText(getString(R.string.start));
+		btnPause.setText(getString(R.string.pause));
+		btnPause.setEnabled(false);
 	}
 
 	@Override
@@ -127,7 +128,7 @@ public class MainActivity extends Activity {
 		super.onSaveInstanceState(outState);
 		outState.putInt("state", state);
 		outState.putLong("startTime", startTime);
-		outState.putLong("lastWorkingTime", lastWorkingTime);
+		outState.putLong("lastWorkingTime", lastDuration);
 	}
 
 	@Override
@@ -135,7 +136,7 @@ public class MainActivity extends Activity {
 		super.onRestoreInstanceState(savedInstanceState);
 		state = (Integer) savedInstanceState.get("state");
 		startTime = (Long) savedInstanceState.get("startTime");
-		lastWorkingTime = (Long) savedInstanceState.get("lastWorkingTime");
+		lastDuration = (Long) savedInstanceState.get("lastWorkingTime");
 	}
 
 	private String formatTime(long duration) {
