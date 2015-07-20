@@ -8,20 +8,25 @@ import android.view.*;
 import android.widget.*;
 import android.util.Log;
 
-public class MainActivity extends Activity {
+public class ChronometerActivity extends Activity implements IChronometer {
+
+	// UI elements
 	private Button btnStart;
 	private Button btnPause;
-	private TextView txtTimer;
+	private TextView txtTime;
 
+	// state variables
 	private int state;
 	private long startTime;
 	private long lastDuration;
-	
 	private boolean hasStarted;
+
+	// threads objects
 	private Handler showTimeHandler;
 	private Runnable showTimeThread;
 	private AsyncTask<String, Void, Void> timerTask;
 
+	// constants
 	private final static int STOP = 0;
 	private final static int START = 1;
 	private final static int SUSPENDED = 2;
@@ -32,39 +37,39 @@ public class MainActivity extends Activity {
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.main);
-		state = STOP;
-		hasStarted = false;
-		btnPause = (Button) findViewById(R.id.pause_btn);
-		btnStart = (Button) findViewById(R.id.start_btn);
-		txtTimer = (TextView) findViewById(R.id.time_txt);
+
+		// get UI elements
+		btnPause = (Button) findViewById(R.id.btn_pause);
+		btnStart = (Button) findViewById(R.id.btn_start);
+		txtTime = (TextView) findViewById(R.id.txt_time);
+
 		if (savedInstanceState != null) {
+			// restore state
 			state = (Integer) savedInstanceState.get("state");
 			startTime = (Long) savedInstanceState.get("startTime");
 			lastDuration = (Long) savedInstanceState.get("lastWorkingTime");
 			startTime = System.currentTimeMillis() - lastDuration;
 			showCurrentTime();
 			if (state == START) {
-				doStart();
+				startTimer();
 			}
 		} else {
-			txtTimer.setText("00:00:00:000");
+			// init state
+			hasStarted = false;
+			state = STOP;
+			txtTime.setText("00:00:00:000");
 		}
-		
+
 		btnStart.setOnClickListener(new View.OnClickListener() {
 
 			@Override
 			public void onClick(View view) {
-				if (state == START || state == SUSPENDED) {
-					state = STOP;
-					showCurrentTime();
-					doStop();
-					return;
-				} else if (state == STOP) {
+				if (isWorking() || isPaused()) {
+					// stop working
+					stopTimer();
+				} else if (isStoped()) {
 					// start working
-					startTime = System.currentTimeMillis();
-					state = START;
-					doStart();
-					return;
+					startTimer();
 				}
 			}
 		});
@@ -72,55 +77,99 @@ public class MainActivity extends Activity {
 		btnPause.setOnClickListener(new View.OnClickListener() {
 			@Override
 			public void onClick(View view) {
-				if (state == START) {
-					lastDuration = System.currentTimeMillis() - startTime;
-					state = SUSPENDED;
-					btnPause.setText(getString(R.string.resume));
-					showCurrentTime();
-					return;
-				} else if (state == SUSPENDED) {
-					startTime = System.currentTimeMillis() - lastDuration;
-					state = START;
-					doStart();
+				if (isWorking()) {
+					pauseTimer();
+				} else if (isPaused()) {
+					resumeTimer();
 					btnPause.setText(getString(R.string.pause));
-					return;
 				}
 			}
 		});
 
 	}
 
+	/*
+	 * show the current time on the label
+	 */
 	private void showCurrentTime() {
 		long duration = System.currentTimeMillis() - startTime;
-		txtTimer.setText(formatTime(duration));
+		txtTime.setText(formatTime(duration));
 	}
 
-	private void doStart() {
-		Log.w("start at ", "" + timerTask);
+	/*
+	 * start running
+	 */
+	private void startTimer() {
+		startTime = System.currentTimeMillis();
+		state = START;
 		btnStart.setText(getString(R.string.stop));
 		btnPause.setEnabled(true);
+		startThreads();
+		Log.w("start at ", "" + timerTask);
+	}
+
+	/*
+	 * pause the chronometer
+	 */
+	private void pauseTimer() {
+		lastDuration = System.currentTimeMillis() - startTime;
+		state = SUSPENDED;
+		btnPause.setText(getString(R.string.resume));
+		showCurrentTime();
+	}
+
+	/*
+	 * start again
+	 */
+	private void resumeTimer() {
+		startTime = System.currentTimeMillis() - lastDuration;
+		state = START;
+		btnStart.setText(getString(R.string.stop));
+		btnPause.setEnabled(true);
+		startThreads();
+	}
+
+	/*
+	 * stop working
+	 */
+	private void stopTimer() {
+		state = STOP;
+		if (isWorking()) {
+			showCurrentTime();
+		}
+		btnStart.setText(getString(R.string.start));
+		btnPause.setText(getString(R.string.pause));
+		btnPause.setEnabled(false);
+		Log.w("stop at ", "" + timerTask);
+	}
+
+	public void updateTimeTxt() {
+		if (showTimeHandler == null) {
+			showTimeHandler = new Handler(getApplicationContext()
+					.getMainLooper());
+		}
+		if (showTimeThread == null) {
+			showTimeThread = new Runnable() {
+				public void run() {
+					showCurrentTime();
+				}
+			};
+		}
+		showTimeHandler.post(showTimeThread);
+	}
+
+	/*
+	 * start UI threads
+	 */
+	private void startThreads() {
 		if (hasStarted) {
-			timerTask.cancel(true);
-			timerTask = new TimerTask();
+			timerTask = new TimerTask(this);
 			timerTask.execute(new String[] { "" });
 			return;
 		}
 		hasStarted = true;
-		showTimeHandler = new Handler(getApplicationContext().getMainLooper());
-		showTimeThread = new Runnable() {
-			public void run() {
-				showCurrentTime();
-			}
-		};
-		timerTask = new TimerTask();
+		timerTask = new TimerTask(this);
 		timerTask.execute(new String[] { "" });
-	}
-
-	private void doStop() {
-		Log.w("stop at ", "" + timerTask);
-		btnStart.setText(getString(R.string.start));
-		btnPause.setText(getString(R.string.pause));
-		btnPause.setEnabled(false);
 	}
 
 	@Override
@@ -139,6 +188,9 @@ public class MainActivity extends Activity {
 		lastDuration = (Long) savedInstanceState.get("lastWorkingTime");
 	}
 
+	/*
+	 * convert milli seconds to human readable time
+	 */
 	private String formatTime(long duration) {
 		StringBuffer temp = new StringBuffer();
 		long hour = duration / (60 * 60 * 1000);
@@ -175,18 +227,32 @@ public class MainActivity extends Activity {
 		return temp.toString();
 	}
 
-	private class TimerTask extends AsyncTask<String, Void, Void> {
-		@Override
-		protected Void doInBackground(String... params) {
-			while (state == START) {
-				try {
-					Thread.sleep(DELAY);
-				} catch (Exception e) {
-				}
-				showTimeHandler.post(showTimeThread);
-			}
-			return null;
-		}
-
+	public boolean isWorking() {
+		return state == START;
 	}
+
+	public boolean isPaused() {
+		return state == SUSPENDED;
+	}
+
+	public boolean isStoped() {
+		return state == STOP;
+	}
+
+	public long getDelay() {
+		return DELAY;
+	}
+
+	/*
+	 * A thread which updates the UI every DELAY mili seconds
+	 */
+	/*
+	 * private class TimerTask extends AsyncTask<String, Void, Void> {
+	 * 
+	 * @Override protected Void doInBackground(String... params) { while
+	 * (isWorking()) { try { Thread.sleep(getDelay()); } catch (Exception e) { }
+	 * // update UI updateTimeTxt(); } return null; }
+	 * 
+	 * }
+	 */
 }
