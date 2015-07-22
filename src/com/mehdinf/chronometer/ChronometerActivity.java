@@ -190,7 +190,6 @@ public class ChronometerActivity extends Activity implements IChronometer {
 		long min = duration / (60 * 1000);
 		duration = duration % (60 * 1000);
 		long sec = duration / (1000);
-		long milli = duration % 1000;
 		if (hour / 10 == 0) {
 			temp.append("0");
 		}
