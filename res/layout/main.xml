@@ -5,30 +5,43 @@
     android:gravity="center"
     android:orientation="vertical" >
 
-    <TextView
+    <LinearLayout
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-		android:paddingBottom="10dp"
-        android:id="@+id/txt_time"/>
-	<LinearLayout 
-		android:layout_width="wrap_content"
-		android:layout_height="wrap_content"
-		android:gravity="center"
-		android:orientation="horizontal" 
-		>
-	<Button
-		android:id="@+id/btn_start"
-		android:layout_width="wrap_content"
-		android:layout_height="wrap_content"
-		android:text="@string/start"
-		/>
-	<Button
-			android:id="@+id/btn_pause"
-			android:layout_width="wrap_content"
-			android:layout_height="wrap_content"
-			android:text="@string/pause"
-			android:enabled="false"
-		/>
-		
-	</LinearLayout>
+        android:paddingBottom="10dp" >
+
+        <TextView
+            android:id="@+id/txt_time"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textSize="20sp" />
+
+        <TextView
+            android:id="@+id/txt_mili"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content" 
+            android:text="000"
+            android:textSize="15sp"/>
+    </LinearLayout>
+
+    <LinearLayout
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:gravity="center"
+        android:orientation="horizontal" >
+
+        <Button
+            android:id="@+id/btn_start"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/start" />
+
+        <Button
+            android:id="@+id/btn_pause"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:enabled="false"
+            android:text="@string/pause" />
+    </LinearLayout>
+
 </LinearLayout>

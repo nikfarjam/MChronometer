@@ -14,6 +14,7 @@ public class ChronometerActivity extends Activity implements IChronometer {
 	private Button btnStart;
 	private Button btnPause;
 	private TextView txtTime;
+	private TextView txtMili;
 
 	// state variables
 	private int state;
@@ -42,23 +43,13 @@ public class ChronometerActivity extends Activity implements IChronometer {
 		btnPause = (Button) findViewById(R.id.btn_pause);
 		btnStart = (Button) findViewById(R.id.btn_start);
 		txtTime = (TextView) findViewById(R.id.txt_time);
+		txtMili = (TextView) findViewById(R.id.txt_mili);
 
-		if (savedInstanceState != null) {
-			// restore state
-			state = (Integer) savedInstanceState.get("state");
-			startTime = (Long) savedInstanceState.get("startTime");
-			lastDuration = (Long) savedInstanceState.get("lastWorkingTime");
-			startTime = System.currentTimeMillis() - lastDuration;
-			showCurrentTime();
-			if (state == START) {
-				startTimer();
-			}
-		} else {
-			// init state
-			hasStarted = false;
-			state = STOP;
-			txtTime.setText("00:00:00:000");
-		}
+		// init state
+		hasStarted = false;
+		state = STOP;
+		txtTime.setText("00:00:00.");
+		txtMili.setText("000");
 
 		btnStart.setOnClickListener(new View.OnClickListener() {
 
@@ -94,6 +85,7 @@ public class ChronometerActivity extends Activity implements IChronometer {
 	private void showCurrentTime() {
 		long duration = System.currentTimeMillis() - startTime;
 		txtTime.setText(formatTime(duration));
+		txtMili.setText(formatMiliSeconds(duration));
 	}
 
 	/*
@@ -214,6 +206,12 @@ public class ChronometerActivity extends Activity implements IChronometer {
 		}
 		temp.append(sec);
 		temp.append(".");
+		return temp.toString();
+	}
+
+	private String formatMiliSeconds(long duration) {
+		StringBuffer temp = new StringBuffer();
+		long milli = duration % 1000;
 		if (milli == 0) {
 			temp.append("000");
 		} else {
