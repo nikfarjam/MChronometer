@@ -5,5 +5,7 @@
     <string name="pause">Pause</string>
 	<string name="resume">Resume</string>
     <string name="app_name">Chronometer</string>
+    <string name="about">About</string>
+    <string name="reset">Reset</string>
 
 </resources>

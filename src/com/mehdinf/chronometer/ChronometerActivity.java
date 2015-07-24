@@ -11,13 +11,12 @@ import android.util.Log;
 public class ChronometerActivity extends Activity implements IChronometer {
 
 	// UI elements
-	private Button btnStart;	
+	private Button btnStart;
 	private Button btnPause;
 	private TextView txtTime;
 	private TextView txtMili;
 
-	// state variables
-//	private int state;
+	// private int state;
 	private long startTime;
 	private long lastDuration;
 	private boolean hasStarted;
@@ -30,6 +29,10 @@ public class ChronometerActivity extends Activity implements IChronometer {
 
 	// constants
 	private final static long DELAY = 20;
+
+	// menu constants
+	private final int MENU_ABOUT = 1, MENU_RESET = 2;
+	private final int GROUP_DEFAULT = 0, GROUP_RESET = 1;
 
 	/** Called when the activity is first created. */
 	@Override
@@ -46,8 +49,7 @@ public class ChronometerActivity extends Activity implements IChronometer {
 		// init state
 		hasStarted = false;
 		state = new ChronometerState();
-		txtTime.setText("00:00:00.");
-		txtMili.setText("000");
+		reset();
 
 		btnStart.setOnClickListener(new View.OnClickListener() {
 
@@ -133,6 +135,14 @@ public class ChronometerActivity extends Activity implements IChronometer {
 		Log.w("stop at ", "" + timerTask);
 	}
 
+	private void reset() {
+		state.reset();
+		txtTime.setText("00:00:00.");
+		txtMili.setText("000");
+		startTime = 0L;
+		state.stopWorking();
+	}
+
 	public void updateTimeTxt() {
 		if (showTimeHandler == null) {
 			showTimeHandler = new Handler(getApplicationContext()
@@ -176,6 +186,43 @@ public class ChronometerActivity extends Activity implements IChronometer {
 		state = (ChronometerState) savedInstanceState.get("state");
 		startTime = (Long) savedInstanceState.get("startTime");
 		lastDuration = (Long) savedInstanceState.get("lastWorkingTime");
+	}
+
+	@Override
+	public boolean onCreateOptionsMenu(Menu menu) {
+		menu.add(GROUP_DEFAULT, MENU_ABOUT, 0, getString(R.string.about));
+		menu.add(GROUP_RESET, MENU_RESET, 1, getString(R.string.reset));
+		return super.onCreateOptionsMenu(menu);
+	}
+
+	@Override
+	public boolean onPrepareOptionsMenu(Menu menu) {
+		if (hasStarted) {
+			menu.setGroupEnabled(GROUP_RESET, true);
+		} else {
+			menu.setGroupEnabled(GROUP_RESET, false);
+		}
+		return super.onPrepareOptionsMenu(menu);
+	}
+
+	@Override
+	public boolean onOptionsItemSelected(MenuItem item) {
+		switch (item.getItemId()) {
+		case MENU_RESET:
+			reset();
+			break;
+
+		case MENU_ABOUT:
+			Toast.makeText(this, "An android chronometer by nikfarjam",
+					Toast.LENGTH_SHORT).show();
+
+			break;
+
+		default:
+			break;
+		}
+
+		return super.onOptionsItemSelected(item);
 	}
 
 	/*
