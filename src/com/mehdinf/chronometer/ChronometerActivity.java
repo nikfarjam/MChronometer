@@ -16,10 +16,6 @@ public class ChronometerActivity extends Activity implements IChronometer {
 	private TextView txtTime;
 	private TextView txtMili;
 
-	// private int state;
-	private long startTime;
-	private long lastDuration;
-	private boolean hasStarted;
 	private ChronometerState state;
 
 	// threads objects
@@ -47,7 +43,6 @@ public class ChronometerActivity extends Activity implements IChronometer {
 		txtMili = (TextView) findViewById(R.id.txt_mili);
 
 		// init state
-		hasStarted = false;
 		state = new ChronometerState();
 		reset();
 
@@ -83,7 +78,7 @@ public class ChronometerActivity extends Activity implements IChronometer {
 	 * show the current time on the label
 	 */
 	private void showCurrentTime() {
-		long duration = System.currentTimeMillis() - startTime;
+		long duration = System.currentTimeMillis() - state.getStartTime();
 		txtTime.setText(formatTime(duration));
 		txtMili.setText(formatMiliSeconds(duration));
 	}
@@ -92,7 +87,7 @@ public class ChronometerActivity extends Activity implements IChronometer {
 	 * start running
 	 */
 	private void startTimer() {
-		startTime = System.currentTimeMillis();
+		state.setStartTime(System.currentTimeMillis());
 		state.startWorking();
 		btnStart.setText(getString(R.string.stop));
 		btnPause.setEnabled(true);
@@ -104,7 +99,7 @@ public class ChronometerActivity extends Activity implements IChronometer {
 	 * pause the chronometer
 	 */
 	private void pauseTimer() {
-		lastDuration = System.currentTimeMillis() - startTime;
+		state.setLastDuration(System.currentTimeMillis() - state.getStartTime());
 		state.pauseWorking();
 		btnPause.setText(getString(R.string.resume));
 		showCurrentTime();
@@ -114,7 +109,7 @@ public class ChronometerActivity extends Activity implements IChronometer {
 	 * start again
 	 */
 	private void resumeTimer() {
-		startTime = System.currentTimeMillis() - lastDuration;
+		state.setStartTime(System.currentTimeMillis() - state.getLastDuration());
 		state.startWorking();
 		btnStart.setText(getString(R.string.stop));
 		btnPause.setEnabled(true);
@@ -139,8 +134,9 @@ public class ChronometerActivity extends Activity implements IChronometer {
 		state.reset();
 		txtTime.setText("00:00:00.");
 		txtMili.setText("000");
-		startTime = 0L;
-		state.stopWorking();
+		btnStart.setText(getString(R.string.start));
+		btnPause.setText(getString(R.string.pause));
+		btnPause.setEnabled(false);
 	}
 
 	public void updateTimeTxt() {
@@ -162,12 +158,12 @@ public class ChronometerActivity extends Activity implements IChronometer {
 	 * start UI threads
 	 */
 	private void startThreads() {
-		if (hasStarted) {
+		if (state.isStarted()) {
 			timerTask = new TimerTask(this);
 			timerTask.execute(new String[] { "" });
 			return;
 		}
-		hasStarted = true;
+		state.setHasStarted(true);
 		timerTask = new TimerTask(this);
 		timerTask.execute(new String[] { "" });
 	}
@@ -176,16 +172,12 @@ public class ChronometerActivity extends Activity implements IChronometer {
 	protected void onSaveInstanceState(Bundle outState) {
 		super.onSaveInstanceState(outState);
 		outState.putSerializable("state", state);
-		outState.putLong("startTime", startTime);
-		outState.putLong("lastWorkingTime", lastDuration);
 	}
 
 	@Override
 	protected void onRestoreInstanceState(Bundle savedInstanceState) {
 		super.onRestoreInstanceState(savedInstanceState);
 		state = (ChronometerState) savedInstanceState.get("state");
-		startTime = (Long) savedInstanceState.get("startTime");
-		lastDuration = (Long) savedInstanceState.get("lastWorkingTime");
 	}
 
 	@Override
@@ -197,7 +189,7 @@ public class ChronometerActivity extends Activity implements IChronometer {
 
 	@Override
 	public boolean onPrepareOptionsMenu(Menu menu) {
-		if (hasStarted) {
+		if (state.isStarted()) {
 			menu.setGroupEnabled(GROUP_RESET, true);
 		} else {
 			menu.setGroupEnabled(GROUP_RESET, false);
@@ -215,7 +207,6 @@ public class ChronometerActivity extends Activity implements IChronometer {
 		case MENU_ABOUT:
 			Toast.makeText(this, "An android chronometer by nikfarjam",
 					Toast.LENGTH_SHORT).show();
-
 			break;
 
 		default:

@@ -11,10 +11,19 @@ public class ChronometerState implements Serializable {
 	private final static int SUSPENDED = 2;
 
 	private int state;
+	private long startTime;
+	private long lastDuration;
+	private boolean hasStarted;
 
 	public ChronometerState() {
 		super();
 		reset();
+	}
+
+	public void reset() {
+		hasStarted = false;
+		state = STOP;
+		startTime = 0L;
 	}
 
 	public boolean isWorking() {
@@ -41,7 +50,28 @@ public class ChronometerState implements Serializable {
 		state = STOP;
 	}
 
-	public void reset() {
-		state = STOP;
+	public long getLastDuration() {
+		return lastDuration;
 	}
+
+	public void setLastDuration(long lastDuration) {
+		this.lastDuration = lastDuration;
+	}
+
+	public boolean isStarted() {
+		return hasStarted;
+	}
+
+	public void setHasStarted(boolean hasStarted) {
+		this.hasStarted = hasStarted;
+	}
+
+	public long getStartTime() {
+		return startTime;
+	}
+
+	public void setStartTime(long startTime) {
+		this.startTime = startTime;
+	}
+
 }
