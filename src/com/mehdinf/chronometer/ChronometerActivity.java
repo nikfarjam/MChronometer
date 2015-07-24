@@ -11,16 +11,17 @@ import android.util.Log;
 public class ChronometerActivity extends Activity implements IChronometer {
 
 	// UI elements
-	private Button btnStart;
+	private Button btnStart;	
 	private Button btnPause;
 	private TextView txtTime;
 	private TextView txtMili;
 
 	// state variables
-	private int state;
+//	private int state;
 	private long startTime;
 	private long lastDuration;
 	private boolean hasStarted;
+	private ChronometerState state;
 
 	// threads objects
 	private Handler showTimeHandler;
@@ -28,10 +29,7 @@ public class ChronometerActivity extends Activity implements IChronometer {
 	private AsyncTask<String, Void, Void> timerTask;
 
 	// constants
-	private final static int STOP = 0;
-	private final static int START = 1;
-	private final static int SUSPENDED = 2;
-	private final static long DELAY = 200;
+	private final static long DELAY = 20;
 
 	/** Called when the activity is first created. */
 	@Override
@@ -47,7 +45,7 @@ public class ChronometerActivity extends Activity implements IChronometer {
 
 		// init state
 		hasStarted = false;
-		state = STOP;
+		state = new ChronometerState();
 		txtTime.setText("00:00:00.");
 		txtMili.setText("000");
 
@@ -93,7 +91,7 @@ public class ChronometerActivity extends Activity implements IChronometer {
 	 */
 	private void startTimer() {
 		startTime = System.currentTimeMillis();
-		state = START;
+		state.startWorking();
 		btnStart.setText(getString(R.string.stop));
 		btnPause.setEnabled(true);
 		startThreads();
@@ -105,7 +103,7 @@ public class ChronometerActivity extends Activity implements IChronometer {
 	 */
 	private void pauseTimer() {
 		lastDuration = System.currentTimeMillis() - startTime;
-		state = SUSPENDED;
+		state.pauseWorking();
 		btnPause.setText(getString(R.string.resume));
 		showCurrentTime();
 	}
@@ -115,7 +113,7 @@ public class ChronometerActivity extends Activity implements IChronometer {
 	 */
 	private void resumeTimer() {
 		startTime = System.currentTimeMillis() - lastDuration;
-		state = START;
+		state.startWorking();
 		btnStart.setText(getString(R.string.stop));
 		btnPause.setEnabled(true);
 		startThreads();
@@ -125,7 +123,7 @@ public class ChronometerActivity extends Activity implements IChronometer {
 	 * stop working
 	 */
 	private void stopTimer() {
-		state = STOP;
+		state.stopWorking();
 		if (isWorking()) {
 			showCurrentTime();
 		}
@@ -167,7 +165,7 @@ public class ChronometerActivity extends Activity implements IChronometer {
 	@Override
 	protected void onSaveInstanceState(Bundle outState) {
 		super.onSaveInstanceState(outState);
-		outState.putInt("state", state);
+		outState.putSerializable("state", state);
 		outState.putLong("startTime", startTime);
 		outState.putLong("lastWorkingTime", lastDuration);
 	}
@@ -175,7 +173,7 @@ public class ChronometerActivity extends Activity implements IChronometer {
 	@Override
 	protected void onRestoreInstanceState(Bundle savedInstanceState) {
 		super.onRestoreInstanceState(savedInstanceState);
-		state = (Integer) savedInstanceState.get("state");
+		state = (ChronometerState) savedInstanceState.get("state");
 		startTime = (Long) savedInstanceState.get("startTime");
 		lastDuration = (Long) savedInstanceState.get("lastWorkingTime");
 	}
@@ -225,31 +223,18 @@ public class ChronometerActivity extends Activity implements IChronometer {
 	}
 
 	public boolean isWorking() {
-		return state == START;
+		return state.isWorking();
 	}
 
 	public boolean isPaused() {
-		return state == SUSPENDED;
+		return state.isPaused();
 	}
 
 	public boolean isStoped() {
-		return state == STOP;
+		return state.isStoped();
 	}
 
 	public long getDelay() {
 		return DELAY;
 	}
-
-	/*
-	 * A thread which updates the UI every DELAY mili seconds
-	 */
-	/*
-	 * private class TimerTask extends AsyncTask<String, Void, Void> {
-	 * 
-	 * @Override protected Void doInBackground(String... params) { while
-	 * (isWorking()) { try { Thread.sleep(getDelay()); } catch (Exception e) { }
-	 * // update UI updateTimeTxt(); } return null; }
-	 * 
-	 * }
-	 */
 }

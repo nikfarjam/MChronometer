@@ -3,4 +3,5 @@ todo.txt
 gen/
 .settings/
 .classpath
+lint.xml
 
