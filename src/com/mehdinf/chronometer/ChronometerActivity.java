@@ -139,6 +139,7 @@ public class ChronometerActivity extends Activity implements IChronometer {
 		btnPause.setEnabled(false);
 	}
 
+	@Override
 	public void updateTimeTxt() {
 		if (showTimeHandler == null) {
 			showTimeHandler = new Handler(getApplicationContext()
@@ -260,6 +261,7 @@ public class ChronometerActivity extends Activity implements IChronometer {
 		return temp.toString();
 	}
 
+	@Override
 	public boolean isWorking() {
 		return state.isWorking();
 	}
@@ -272,6 +274,7 @@ public class ChronometerActivity extends Activity implements IChronometer {
 		return state.isStoped();
 	}
 
+	@Override
 	public long getDelay() {
 		return DELAY;
 	}
