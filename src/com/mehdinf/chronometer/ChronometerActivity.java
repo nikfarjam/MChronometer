@@ -17,6 +17,7 @@ public class ChronometerActivity extends Activity implements IChronometer {
 	private TextView txtMili;
 
 	private ChronometerState state;
+	private long lastBackPress;
 
 	// threads objects
 	private Handler showTimeHandler;
@@ -25,6 +26,7 @@ public class ChronometerActivity extends Activity implements IChronometer {
 
 	// constants
 	private final static long DELAY = 20;
+	private final static long BACK_DELAY = 2000;
 
 	// menu constants
 	private final int MENU_ABOUT = 1, MENU_RESET = 2;
@@ -45,6 +47,7 @@ public class ChronometerActivity extends Activity implements IChronometer {
 		// init state
 		state = new ChronometerState();
 		reset();
+		lastBackPress = 0;
 
 		btnStart.setOnClickListener(new View.OnClickListener() {
 
@@ -167,6 +170,18 @@ public class ChronometerActivity extends Activity implements IChronometer {
 		state.setHasStarted(true);
 		timerTask = new TimerTask(this);
 		timerTask.execute(new String[] { "" });
+	}
+
+	@Override
+	public void onBackPressed() {
+		if (lastBackPress + BACK_DELAY < System.currentTimeMillis()) {
+			reset();
+			stopTimer();
+			super.onBackPressed();
+		} else {
+			finish();
+		}
+
 	}
 
 	@Override
