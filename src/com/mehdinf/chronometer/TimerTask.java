@@ -3,9 +3,9 @@ package com.mehdinf.chronometer;
 import android.os.AsyncTask;
 
 public class TimerTask extends AsyncTask<String, Void, Void> {
-	
+
 	IChronometer chronometer;
-	
+
 	public TimerTask(IChronometer chronometer) {
 		super();
 		this.chronometer = chronometer;
@@ -18,8 +18,10 @@ public class TimerTask extends AsyncTask<String, Void, Void> {
 				Thread.sleep(chronometer.getDelay());
 			} catch (Exception e) {
 			}
-			// update UI
-			chronometer.updateTimeTxt();
+			if (chronometer.isWorking()) {
+				// update UI
+				chronometer.updateTimeTxt();
+			}
 		}
 		return null;
 	}

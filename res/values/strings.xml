@@ -1,11 +1,12 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-	<string name="stop">Stop</string>
-	<string name="start">Start</string>
-    <string name="pause">Pause</string>
-	<string name="resume">Resume</string>
+	<string name="stop">&#xf04d;</string>
+	<string name="start">&#xf04b;</string>
+    <string name="pause">&#xf04c;</string>
+	<string name="resume">&#xf01e;</string>
     <string name="app_name">Chronometer</string>
     <string name="about">About</string>
     <string name="reset">Reset</string>
+    <string name="about_comment">An android chronometer by nikfarjam\nFont Awesome by Dave Gandy - http://fontawesome.io</string>
 
 </resources>

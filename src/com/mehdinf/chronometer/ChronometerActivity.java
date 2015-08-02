@@ -3,6 +3,7 @@ package com.mehdinf.chronometer;
 import com.mehdinf.sample.R;
 
 import android.app.*;
+import android.graphics.Typeface;
 import android.os.*;
 import android.view.*;
 import android.widget.*;
@@ -44,6 +45,11 @@ public class ChronometerActivity extends Activity implements IChronometer {
 		txtTime = (TextView) findViewById(R.id.txt_time);
 		txtMili = (TextView) findViewById(R.id.txt_mili);
 
+		Typeface cssFont = Typeface.createFromAsset(getAssets(),
+				"fontawesome-webfont.ttf");
+		btnPause.setTypeface(cssFont);
+		btnStart.setTypeface(cssFont);
+
 		// init state
 		state = new ChronometerState();
 		reset();
@@ -81,9 +87,11 @@ public class ChronometerActivity extends Activity implements IChronometer {
 	 * show the current time on the label
 	 */
 	private void showCurrentTime() {
-		long duration = System.currentTimeMillis() - state.getStartTime();
-		txtTime.setText(formatTime(duration));
-		txtMili.setText(formatMiliSeconds(duration));
+		if (state.isWorking()) {
+			long duration = System.currentTimeMillis() - state.getStartTime();
+			txtTime.setText(formatTime(duration));
+			txtMili.setText(formatMiliSeconds(duration));
+		}
 	}
 
 	/*
@@ -92,8 +100,7 @@ public class ChronometerActivity extends Activity implements IChronometer {
 	private void startTimer() {
 		state.setStartTime(System.currentTimeMillis());
 		state.startWorking();
-		btnStart.setText(getString(R.string.stop));
-		btnPause.setEnabled(true);
+		setStartButton();
 		startThreads();
 		Log.w("start at ", "" + timerTask);
 	}
@@ -114,8 +121,7 @@ public class ChronometerActivity extends Activity implements IChronometer {
 	private void resumeTimer() {
 		state.setStartTime(System.currentTimeMillis() - state.getLastDuration());
 		state.startWorking();
-		btnStart.setText(getString(R.string.stop));
-		btnPause.setEnabled(true);
+		setStartButton();
 		startThreads();
 	}
 
@@ -127,16 +133,24 @@ public class ChronometerActivity extends Activity implements IChronometer {
 		if (isWorking()) {
 			showCurrentTime();
 		}
-		btnStart.setText(getString(R.string.start));
-		btnPause.setText(getString(R.string.pause));
-		btnPause.setEnabled(false);
+		setStopButton();
 		Log.w("stop at ", "" + timerTask);
 	}
 
 	private void reset() {
 		state.reset();
+		setStopButton();
 		txtTime.setText("00:00:00.");
 		txtMili.setText("000");
+	}
+
+	private void setStartButton() {
+		btnStart.setText(getString(R.string.stop));
+		btnPause.setEnabled(true);
+		btnPause.setText(getString(R.string.pause));
+	}
+
+	private void setStopButton() {
 		btnStart.setText(getString(R.string.start));
 		btnPause.setText(getString(R.string.pause));
 		btnPause.setEnabled(false);
@@ -175,8 +189,8 @@ public class ChronometerActivity extends Activity implements IChronometer {
 	@Override
 	public void onBackPressed() {
 		if (lastBackPress + BACK_DELAY < System.currentTimeMillis()) {
-			reset();
 			stopTimer();
+			reset();
 			super.onBackPressed();
 		} else {
 			finish();
@@ -221,7 +235,7 @@ public class ChronometerActivity extends Activity implements IChronometer {
 			break;
 
 		case MENU_ABOUT:
-			Toast.makeText(this, "An android chronometer by nikfarjam",
+			Toast.makeText(this, getString(R.string.about_comment),
 					Toast.LENGTH_SHORT).show();
 			break;
 

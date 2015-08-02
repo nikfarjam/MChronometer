@@ -21,8 +21,8 @@ public class ChronometerState implements Serializable {
 	}
 
 	public void reset() {
-		hasStarted = false;
 		state = STOP;
+		hasStarted = false;
 		startTime = 0L;
 	}
 

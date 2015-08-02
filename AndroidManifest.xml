@@ -13,6 +13,7 @@
         android:label="@string/app_name"
         android:theme="@style/AppTheme" >
         <activity
+            android:screenOrientation="portrait"
             android:label="@string/app_name"
             android:name="com.mehdinf.chronometer.ChronometerActivity" >
             <intent-filter >
