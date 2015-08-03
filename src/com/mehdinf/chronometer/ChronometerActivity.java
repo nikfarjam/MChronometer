@@ -26,7 +26,7 @@ public class ChronometerActivity extends Activity implements IChronometer {
 	private AsyncTask<String, Void, Void> timerTask;
 
 	// constants
-	private final static long DELAY = 20;
+	private final static long DELAY = 200;
 	private final static long BACK_DELAY = 2000;
 
 	// menu constants
@@ -87,7 +87,7 @@ public class ChronometerActivity extends Activity implements IChronometer {
 	 * show the current time on the label
 	 */
 	private void showCurrentTime() {
-		if (state.isWorking()) {
+		if (state.getStartTime() > 0) {
 			long duration = System.currentTimeMillis() - state.getStartTime();
 			txtTime.setText(formatTime(duration));
 			txtMili.setText(formatMiliSeconds(duration));

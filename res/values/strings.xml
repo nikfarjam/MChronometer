@@ -7,6 +7,6 @@
     <string name="app_name">Chronometer</string>
     <string name="about">About</string>
     <string name="reset">Reset</string>
-    <string name="about_comment">An android chronometer by nikfarjam\nFont Awesome by Dave Gandy - http://fontawesome.io</string>
+    <string name="about_comment">An android chronometer by nikfarjam\nFont Awesome by Dave Gandy</string>
 
 </resources>
