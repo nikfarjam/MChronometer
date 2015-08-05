@@ -26,27 +26,27 @@ public class ChronometerState implements Serializable {
 		startTime = 0L;
 	}
 
-	public boolean isWorking() {
+	public synchronized boolean isWorking() {
 		return state == START;
 	}
 
-	public boolean isPaused() {
+	public synchronized boolean isPaused() {
 		return state == SUSPENDED;
 	}
 
-	public boolean isStoped() {
+	public synchronized boolean isStoped() {
 		return state == STOP;
 	}
 
-	public void startWorking() {
+	public synchronized void startWorking() {
 		state = START;
 	}
 
-	public void pauseWorking() {
+	public synchronized void pauseWorking() {
 		state = SUSPENDED;
 	}
 
-	public void stopWorking() {
+	public synchronized void stopWorking() {
 		state = STOP;
 	}
 
