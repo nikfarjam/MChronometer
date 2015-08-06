@@ -5,8 +5,11 @@
     <string name="pause">&#xf04c;</string>
 	<string name="resume">&#xf01d;</string>
     <string name="app_name">Chronometer</string>
-    <string name="about">About</string>
     <string name="reset">&#xf01e;</string>
+    <string name="menu_about">About</string>
+    <string name="slow">Slow</string>
+    <string name="normal">Normal</string>
+    <string name="fast">Fast</string>
     <string name="about_comment">An android chronometer by nikfarjam\nFont Awesome by Dave Gandy</string>
 
 </resources>

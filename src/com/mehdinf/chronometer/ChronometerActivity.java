@@ -14,6 +14,7 @@ public class ChronometerActivity extends Activity implements IChronometer {
 	// UI elements
 	private Button btnStart;
 	private Button btnPause;
+	private Button btnReset;
 	private TextView txtTime;
 	private TextView txtMili;
 
@@ -26,12 +27,10 @@ public class ChronometerActivity extends Activity implements IChronometer {
 	private AsyncTask<String, Void, Void> timerTask;
 
 	// constants
-	private final static long DELAY = 200;
 	private final static long BACK_DELAY = 2000;
-
-	// menu constants
-	private final int MENU_ABOUT = 1, MENU_RESET = 2;
-	private final int GROUP_DEFAULT = 0, GROUP_RESET = 1;
+	private final static long SLOW_DELAY = 500;
+	private final static long NORMAL_DELAY = 100;
+	private final static long FAST_DELAY = 20;
 
 	/** Called when the activity is first created. */
 	@Override
@@ -42,6 +41,7 @@ public class ChronometerActivity extends Activity implements IChronometer {
 		// get UI elements
 		btnPause = (Button) findViewById(R.id.btn_pause);
 		btnStart = (Button) findViewById(R.id.btn_start);
+		btnReset = (Button) findViewById(R.id.btn_reset);
 		txtTime = (TextView) findViewById(R.id.txt_time);
 		txtMili = (TextView) findViewById(R.id.txt_mili);
 
@@ -49,9 +49,11 @@ public class ChronometerActivity extends Activity implements IChronometer {
 				"fontawesome-webfont.ttf");
 		btnPause.setTypeface(cssFont);
 		btnStart.setTypeface(cssFont);
+		btnReset.setTypeface(cssFont);
 
 		// init state
 		state = new ChronometerState();
+		state.setDelay(NORMAL_DELAY);
 		reset();
 		lastBackPress = 0;
 
@@ -81,6 +83,13 @@ public class ChronometerActivity extends Activity implements IChronometer {
 			}
 		});
 
+		btnReset.setOnClickListener(new View.OnClickListener() {
+
+			@Override
+			public void onClick(View view) {
+				reset();
+			}
+		});
 	}
 
 	/*
@@ -212,23 +221,64 @@ public class ChronometerActivity extends Activity implements IChronometer {
 
 	@Override
 	public boolean onCreateOptionsMenu(Menu menu) {
-		menu.add(GROUP_DEFAULT, MENU_ABOUT, 0, getString(R.string.about));
+		MenuInflater inflater = getMenuInflater();
+		inflater.inflate(R.menu.setting_option_menu, menu);
 		return super.onCreateOptionsMenu(menu);
 	}
 
 	@Override
 	public boolean onPrepareOptionsMenu(Menu menu) {
+		/*
+		MenuItem slowItem = menu.findItem(R.id.menu_slow);
+		MenuItem normalItem = menu.findItem(R.id.menu_normal);
+		MenuItem fastItem = menu.findItem(R.id.menu_fast);
+		
+		if (state.getDelay() == SLOW_DELAY) {
+			Toast.makeText(this, "1", Toast.LENGTH_SHORT).show();
+			slowItem.setChecked(true);
+			normalItem.setChecked(false);
+			fastItem.setChecked(false);
+		} else if (state.getDelay() == NORMAL_DELAY) {
+			Toast.makeText(this, "2", Toast.LENGTH_SHORT).show();
+			slowItem.setChecked(false);
+			normalItem.setChecked(true);
+			fastItem.setChecked(false);
+		} else if (state.getDelay() == FAST_DELAY) {
+			Toast.makeText(this, "3", Toast.LENGTH_SHORT).show();
+			slowItem.setChecked(false);
+			normalItem.setChecked(false);
+			fastItem.setChecked(true);
+		}
+		*/
 		return super.onPrepareOptionsMenu(menu);
 	}
 
 	@Override
 	public boolean onOptionsItemSelected(MenuItem item) {
 		switch (item.getItemId()) {
-		case MENU_ABOUT:
+		case R.id.menu_about:
 			Toast.makeText(this, getString(R.string.about_comment),
 					Toast.LENGTH_SHORT).show();
 			break;
 
+		case R.id.menu_slow:
+			if (!item.isChecked()) {
+				item.setChecked(true);
+				state.setDelay(SLOW_DELAY);
+			}
+			break;
+		case R.id.menu_normal:
+			if (!item.isChecked()) {
+				item.setChecked(true);
+				state.setDelay(NORMAL_DELAY);
+			}
+			break;
+		case R.id.menu_fast:
+			if (!item.isChecked()) {
+				item.setChecked(true);
+				state.setDelay(FAST_DELAY);
+			}
+			break;
 		default:
 			break;
 		}
@@ -295,6 +345,6 @@ public class ChronometerActivity extends Activity implements IChronometer {
 
 	@Override
 	public long getDelay() {
-		return DELAY;
+		return state.getDelay();
 	}
 }

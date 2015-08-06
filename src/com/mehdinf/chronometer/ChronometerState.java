@@ -13,6 +13,10 @@ public class ChronometerState implements Serializable {
 	private int state;
 	private long startTime;
 	private long lastDuration;
+	private long stopTime;
+	
+	private long delay;
+	
 	private boolean hasStarted;
 
 	public ChronometerState() {
@@ -72,6 +76,22 @@ public class ChronometerState implements Serializable {
 
 	public void setStartTime(long startTime) {
 		this.startTime = startTime;
+	}
+
+	public long getStopTime(){
+		return stopTime;
+	}
+
+	public void setStopTime(long stopTime){
+		this.stopTime = stopTime;
+	}
+
+	public long getDelay() {
+		return delay;
+	}
+
+	public void setDelay(long delay) {
+		this.delay = delay;
 	}
 
 }
