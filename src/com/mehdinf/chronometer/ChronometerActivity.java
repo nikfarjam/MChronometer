@@ -228,28 +228,6 @@ public class ChronometerActivity extends Activity implements IChronometer {
 
 	@Override
 	public boolean onPrepareOptionsMenu(Menu menu) {
-		/*
-		MenuItem slowItem = menu.findItem(R.id.menu_slow);
-		MenuItem normalItem = menu.findItem(R.id.menu_normal);
-		MenuItem fastItem = menu.findItem(R.id.menu_fast);
-		
-		if (state.getDelay() == SLOW_DELAY) {
-			Toast.makeText(this, "1", Toast.LENGTH_SHORT).show();
-			slowItem.setChecked(true);
-			normalItem.setChecked(false);
-			fastItem.setChecked(false);
-		} else if (state.getDelay() == NORMAL_DELAY) {
-			Toast.makeText(this, "2", Toast.LENGTH_SHORT).show();
-			slowItem.setChecked(false);
-			normalItem.setChecked(true);
-			fastItem.setChecked(false);
-		} else if (state.getDelay() == FAST_DELAY) {
-			Toast.makeText(this, "3", Toast.LENGTH_SHORT).show();
-			slowItem.setChecked(false);
-			normalItem.setChecked(false);
-			fastItem.setChecked(true);
-		}
-		*/
 		return super.onPrepareOptionsMenu(menu);
 	}
 
