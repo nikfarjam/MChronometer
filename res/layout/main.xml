@@ -20,7 +20,6 @@
             android:id="@+id/txt_mili"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content" 
-            android:text="000"
             android:textSize="15sp"/>
     </LinearLayout>
 
@@ -42,6 +41,12 @@
             android:layout_height="wrap_content"
             android:enabled="false"
             android:text="@string/pause" />
+        <Button
+            android:id="@+id/btn_reset"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:enabled="false"
+            android:text="@string/reset" />
     </LinearLayout>
 
 </LinearLayout>

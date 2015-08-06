@@ -3,10 +3,10 @@
 	<string name="stop">&#xf04d;</string>
 	<string name="start">&#xf04b;</string>
     <string name="pause">&#xf04c;</string>
-	<string name="resume">&#xf01e;</string>
+	<string name="resume">&#xf01d;</string>
     <string name="app_name">Chronometer</string>
     <string name="about">About</string>
-    <string name="reset">Reset</string>
+    <string name="reset">&#xf01e;</string>
     <string name="about_comment">An android chronometer by nikfarjam\nFont Awesome by Dave Gandy</string>
 
 </resources>

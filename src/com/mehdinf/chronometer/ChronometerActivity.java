@@ -213,27 +213,17 @@ public class ChronometerActivity extends Activity implements IChronometer {
 	@Override
 	public boolean onCreateOptionsMenu(Menu menu) {
 		menu.add(GROUP_DEFAULT, MENU_ABOUT, 0, getString(R.string.about));
-		menu.add(GROUP_RESET, MENU_RESET, 1, getString(R.string.reset));
 		return super.onCreateOptionsMenu(menu);
 	}
 
 	@Override
 	public boolean onPrepareOptionsMenu(Menu menu) {
-		if (state.isStarted()) {
-			menu.setGroupEnabled(GROUP_RESET, true);
-		} else {
-			menu.setGroupEnabled(GROUP_RESET, false);
-		}
 		return super.onPrepareOptionsMenu(menu);
 	}
 
 	@Override
 	public boolean onOptionsItemSelected(MenuItem item) {
 		switch (item.getItemId()) {
-		case MENU_RESET:
-			reset();
-			break;
-
 		case MENU_ABOUT:
 			Toast.makeText(this, getString(R.string.about_comment),
 					Toast.LENGTH_SHORT).show();

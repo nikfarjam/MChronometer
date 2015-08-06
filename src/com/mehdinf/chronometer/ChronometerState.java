@@ -30,11 +30,11 @@ public class ChronometerState implements Serializable {
 		return state == START;
 	}
 
-	public synchronized boolean isPaused() {
+	public boolean isPaused() {
 		return state == SUSPENDED;
 	}
 
-	public synchronized boolean isStoped() {
+	public boolean isStoped() {
 		return state == STOP;
 	}
 
