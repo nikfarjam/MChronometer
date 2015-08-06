@@ -2,15 +2,15 @@
 <menu xmlns:android="http://schemas.android.com/apk/res/android" >
 
     <item
-        android:id="@+id/menu_about"
+        android:id="@+id/item_about"
         android:title="@string/menu_about"/>
 	<group android:id="@+id/group"
              android:checkableBehavior="single">
-             <item android:id="@+id/menu_fast"
+             <item android:id="@+id/item_fast"
                    android:title="@string/fast"/>
-             <item android:id="@+id/menu_normal"
+             <item android:id="@+id/item_normal"
                    android:title="@string/normal"/>
-             <item android:id="@+id/menu_slow"
+             <item android:id="@+id/item_slow"
                    android:title="@string/slow"/>
       </group>
 </menu>

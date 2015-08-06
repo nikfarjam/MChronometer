@@ -234,24 +234,24 @@ public class ChronometerActivity extends Activity implements IChronometer {
 	@Override
 	public boolean onOptionsItemSelected(MenuItem item) {
 		switch (item.getItemId()) {
-		case R.id.menu_about:
+		case R.id.item_about:
 			Toast.makeText(this, getString(R.string.about_comment),
 					Toast.LENGTH_SHORT).show();
 			break;
 
-		case R.id.menu_slow:
+		case R.id.item_slow:
 			if (!item.isChecked()) {
 				item.setChecked(true);
 				state.setDelay(SLOW_DELAY);
 			}
 			break;
-		case R.id.menu_normal:
+		case R.id.item_normal:
 			if (!item.isChecked()) {
 				item.setChecked(true);
 				state.setDelay(NORMAL_DELAY);
 			}
 			break;
-		case R.id.menu_fast:
+		case R.id.item_fast:
 			if (!item.isChecked()) {
 				item.setChecked(true);
 				state.setDelay(FAST_DELAY);
