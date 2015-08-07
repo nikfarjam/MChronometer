@@ -96,11 +96,15 @@ public class ChronometerActivity extends Activity implements IChronometer {
 	 * show the current time on the label
 	 */
 	private void showCurrentTime() {
-		if (state.getStartTime() > 0) {
-			long duration = System.currentTimeMillis() - state.getStartTime();
-			txtTime.setText(formatTime(duration));
-			txtMili.setText(formatMiliSeconds(duration));
+		long duration = 0;
+		if (state.isWorking()) {
+			duration = System.currentTimeMillis() - state.getStartTime();
+		} else {
+			duration = state.getStopTime() - state.getStartTime();
 		}
+		txtTime.setText(formatTime(duration));
+		txtMili.setText(formatMiliSeconds(duration));
+
 	}
 
 	/*
@@ -118,7 +122,9 @@ public class ChronometerActivity extends Activity implements IChronometer {
 	 * pause the chronometer
 	 */
 	private void pauseTimer() {
-		state.setLastDuration(System.currentTimeMillis() - state.getStartTime());
+		long now = System.currentTimeMillis();
+		state.setStopTime(now);
+		state.setLastDuration(now - state.getStartTime());
 		state.pauseWorking();
 		btnPause.setText(getString(R.string.resume));
 		showCurrentTime();
@@ -138,10 +144,9 @@ public class ChronometerActivity extends Activity implements IChronometer {
 	 * stop working
 	 */
 	private void stopTimer() {
+		state.setStopTime(System.currentTimeMillis());
 		state.stopWorking();
-		if (isWorking()) {
-			showCurrentTime();
-		}
+		showCurrentTime();
 		setStopButton();
 		Log.w("stop at ", "" + timerTask);
 	}

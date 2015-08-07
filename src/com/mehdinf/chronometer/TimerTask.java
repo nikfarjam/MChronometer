@@ -18,10 +18,8 @@ public class TimerTask extends AsyncTask<String, Void, Void> {
 				Thread.sleep(chronometer.getDelay());
 			} catch (Exception e) {
 			}
-			if (chronometer.isWorking()) {
-				// update UI
-				chronometer.updateTimeTxt();
-			}
+			// update UI
+			chronometer.updateTimeTxt();
 		}
 		return null;
 	}
